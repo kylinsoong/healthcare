@@ -1,0 +1,4 @@
+== What's Healthcare?
+
+Healthcare System is mainly for synchronization of master patient records across different healthcare providers. It is important to have consistent patient information across these multiple providers so that patients may receive consistent care. For that to occur, their personal and medical information needs to be shared. Also, any updates to the patient record need to flow across the providers to maintain accuracy and currency.
+

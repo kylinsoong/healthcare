@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.healthcare</groupId>
+    <artifactId>healthcare</artifactId>
+    <version>0.0.1</version>
+  </parent>
+
+  <artifactId>healthcare-model</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Healthcare Model</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-sources</phase>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources</source>
+              </sources>
+            </configuration>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-xjc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>xsdtojava</goal>
+            </goals>
+            <configuration>
+              <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
+              <xsdOptions>
+                <xsdOption>
+                  <xsd>${basedir}/src/main/resources/META-INF/xsd/ESBResponse.xsd</xsd>
+                  <packagename>com.customer.app.response</packagename>
+                  <bindingFile>${basedir}/src/main/resources/rs/binding.xjb</bindingFile>
+                  <extension>true</extension>
+                </xsdOption>
+                <xsdOption>
+                  <xsd>${basedir}/src/main/resources/META-INF/xsd/PatientDemographics.xsd</xsd>
+                  <packagename>com.customer.app</packagename>
+                  <bindingFile>${basedir}/src/main/resources/rs/binding.xjb</bindingFile>
+                  <extension>true</extension>
+                </xsdOption>
+              </xsdOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

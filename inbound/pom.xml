@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.healthcare</groupId>
+    <artifactId>healthcare</artifactId>
+    <version>0.0.1</version>
+  </parent>
+
+  <artifactId>healthcare-inbound</artifactId>
+
+  <name>Healthcare Inbound</name>
+  <description>healthcare-inbound</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <exclusions>
+            <exclusion>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-tomcat</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-undertow</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    
+    <!--  Camel dependencies 
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-bindy</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-dozer</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jackson</artifactId>
+    </dependency>    -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-servlet</artifactId>
+    </dependency>  
+   
+    <!--  AMQP Dependencies -->
+    
+    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-amqp-starter</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-jms-pool</artifactId>
+    </dependency>
+
+   </dependencies>
+
+    <build>
+
+        <plugins>
+            <plugin>
+                <groupId>org.jboss.redhat-fuse</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>openshift</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jboss.redhat-fuse</groupId>
+                        <artifactId>fabric8-maven-plugin</artifactId>
+                        <configuration>
+                            <enricher>
+                                <excludes>
+                                    <exclude>fmp-openshift-route</exclude>
+                                </excludes>
+                            </enricher>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>resource</goal>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
