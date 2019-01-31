@@ -7,10 +7,20 @@
         <propertyPlaceholder id="properties" location="route.properties"/>
         <route id="pingRoute" streamCache="true">
             <from id="_from1" uri="direct:pingRoute"/>
-            <log message="${headers}"/>
-            <log message="${body}"/>
+            <log id="_log1" message="${headers}"/>
+            <log id="_log2" message="${body}"/>
             <transform id="_transform1">
                 <constant>PONG FROM CAMEL CONTEXT</constant>
+            </transform>
+        </route>
+        <route id="matchRoute" streamCache="true">
+            <from id="_from2" uri="direct:matchRoute"/>
+            <log id="_log3" message="Receive DEIM Service's Request: ${body}"/>
+            <setExchangePattern id="_setExchangePattern2" pattern="InOnly"/>
+            <to id="_to1" uri="amqp:queue:q.empi.deim.in"/>
+            <log id="_log4" message="Send to Queue"/>
+            <transform id="_transform2">
+                <constant>2</constant>
             </transform>
         </route>
     </camelContext>

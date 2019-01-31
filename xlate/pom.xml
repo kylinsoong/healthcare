@@ -9,10 +9,10 @@
     <version>0.0.1</version>
   </parent>
 
-  <artifactId>healthcare-inbound</artifactId>
+  <artifactId>healthcare-xlate</artifactId>
 
-  <name>Healthcare Inbound</name>
-  <description>healthcare-inbound</description>
+  <name>Healthcare xlate</name>
+  <description>healthcare-xlate</description>
 
   <dependencies>
     <dependency>
