@@ -4,7 +4,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
     <!-- Define a traditional camel context here -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <propertyPlaceholder id="properties" location="route.properties"/>
+        <dataFormats>
+            <jaxb contextPath="com.customer.app" id="myJaxb" prettyPrint="true"/>
+        </dataFormats>
         <route id="pingRoute" streamCache="true">
             <from id="_from1" uri="direct:pingRoute"/>
             <log id="_log1" message="${headers}"/>
@@ -16,6 +18,7 @@
         <route id="matchRoute" streamCache="true">
             <from id="_from2" uri="direct:matchRoute"/>
             <log id="_log3" message="Receive DEIM Service's Request: ${body}"/>
+            <marshal id="_marshal1" ref="myJaxb"/>
             <setExchangePattern id="_setExchangePattern2" pattern="InOnly"/>
             <to id="_to1" uri="amqp:queue:q.empi.deim.in"/>
             <log id="_log4" message="Send to Queue"/>
@@ -23,5 +26,11 @@
                 <constant>2</constant>
             </transform>
         </route>
+        <!--  
+         <route id="xlateRoute" streamCache="true">
+            <from id="_from3" uri="amqp:queue:q.empi.deim.in"/>
+            <log id="_log5" message="${body}"/>
+        </route>
+        -->
     </camelContext>
 </beans>

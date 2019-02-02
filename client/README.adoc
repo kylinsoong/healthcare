@@ -1,0 +1,28 @@
+= Healthcare Client
+:toc: manual
+
+A simple JMS Client which used to message to `q.empi.deim.in`, the message is a text message is Marshalled from a `com.customer.app.Person` Object with JAXB. 
+
+Simplely run the mvn exec will send a message:
+
+[source, xml]
+----
+$ mvn clean install exec:java
+...
+Sent message: 
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:Person xsi:schemaLocation="http://www.app.customer.com/PatientDemographics.xsd" xmlns:p="http://www.app.customer.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <p:age>30</p:age>
+    <p:legalname>
+        <p:given>First</p:given>
+        <p:family>Last</p:family>
+    </p:legalname>
+    <p:fathername>Dad</p:fathername>
+    <p:mothername>Mom</p:mothername>
+    <p:gender>
+        <p:code>Male</p:code>
+    </p:gender>
+</p:Person>
+...
+----
+

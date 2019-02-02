@@ -53,10 +53,8 @@
       <artifactId>camel-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
-     
    
     <!--  AMQP Dependencies -->
-    
     
     <dependency>
       <groupId>org.apache.camel</groupId>

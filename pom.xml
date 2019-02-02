@@ -10,6 +10,7 @@
         <module>model</module>
         <module>inbound</module>
         <module>xlate</module>
+        <module>client</module>
     </modules>
 
     <properties>
@@ -20,9 +21,11 @@
         <camel.version>2.17.0.redhat-630254</camel.version>       
         <jackson.version>1.9.13</jackson.version>
         
+        <io.springfox.version>2.5.0</io.springfox.version>
         <fuse.version>7.2.0.fuse-720020-redhat-00001</fuse.version>
         <junit.version>4.12</junit.version>
         
+        <version.exec-maven-plugin>1.6.0</version.exec-maven-plugin>
         <version.cxf-xjc-plugin>3.3.0</version.cxf-xjc-plugin>
         <version.build-helper-maven-plugin>3.0.0</version.build-helper-maven-plugin>
         <version.maven-compiler-plugin>3.5</version.maven-compiler-plugin>
@@ -44,6 +47,18 @@
                 <groupId>com.healthcare</groupId>
                 <artifactId>healthcare-model</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${io.springfox.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${io.springfox.version}</version>
             </dependency>
         
             <dependency>
@@ -90,6 +105,11 @@
                     <groupId>org.jboss.redhat-fuse</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${fuse.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${version.exec-maven-plugin}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
