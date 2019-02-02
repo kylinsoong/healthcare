@@ -21,7 +21,7 @@
             <marshal id="_marshal1" ref="myJaxb"/>
             <setExchangePattern id="_setExchangePattern2" pattern="InOnly"/>
             <to id="_to1" uri="amqp:queue:q.empi.deim.in"/>
-            <log id="_log4" message="Send to Queue"/>
+            <log id="_log4" message="Send to DEIM Queue"/>
             <transform id="_transform2">
                 <constant>2</constant>
             </transform>

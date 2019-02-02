@@ -1,0 +1,16 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+				  xmlns:gs="http://nextgate.com/nextgate-service">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <gs:getExecuteMatchUpdateRequest>
+         <gs:ExecuteMatchUpdate>
+             <gs:age>30</gs:age>
+             <gs:givenName>Given</gs:givenName>
+             <gs:familyName>Family</gs:familyName>
+             <gs:fatherName>Father</gs:fatherName>
+             <gs:motherName>Mother</gs:motherName>
+             <gs:gender>M</gs:gender>
+         </gs:ExecuteMatchUpdate>
+      </gs:getExecuteMatchUpdateRequest>
+   </soapenv:Body>
+</soapenv:Envelope>

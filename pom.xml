@@ -8,8 +8,11 @@
 
     <modules>
         <module>model</module>
+        <module>nextgate-model</module>
+        <module>nextgate</module>
         <module>inbound</module>
         <module>xlate</module>
+        <module>outbound</module>
         <module>client</module>
     </modules>
 
@@ -21,6 +24,8 @@
         <camel.version>2.17.0.redhat-630254</camel.version>       
         <jackson.version>1.9.13</jackson.version>
         
+        <wsdl4j.version>1.6.3</wsdl4j.version>
+        <spring-boot.version>1.5.6.RELEASE</spring-boot.version>
         <io.springfox.version>2.5.0</io.springfox.version>
         <fuse.version>7.2.0.fuse-720020-redhat-00001</fuse.version>
         <junit.version>4.12</junit.version>
@@ -47,6 +52,23 @@
                 <groupId>com.healthcare</groupId>
                 <artifactId>healthcare-model</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>com.healthcare</groupId>
+                <artifactId>healthcare-nextgate-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web-services</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+               <groupId>wsdl4j</groupId>
+               <artifactId>wsdl4j</artifactId>
+               <version>${wsdl4j.version}</version>
             </dependency>
             
             <dependency>

@@ -9,10 +9,10 @@
     <version>0.0.1</version>
   </parent>
 
-  <artifactId>healthcare-xlate</artifactId>
+  <artifactId>healthcare-outbound</artifactId>
 
-  <name>Healthcare xlate</name>
-  <description>healthcare-xlate</description>
+  <name>Healthcare outbound</name>
+  <description>healthcare-outbound</description>
 
   <dependencies>
     <dependency>
@@ -36,11 +36,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.healthcare</groupId>
-      <artifactId>healthcare-model</artifactId>
     </dependency>
     
     <dependency>

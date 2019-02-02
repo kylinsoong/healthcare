@@ -1,0 +1,30 @@
+= Healthcare Nextgate
+:toc: manual
+
+== What's this
+
+This is simple NextGate SOAP Web Service，which used to keep Patient Records.
+
+== 本地运行 & 测试
+
+[source, java]
+.*1. 编译 & 运行*
+----
+$ mvn clean install
+$ java -jar target/healthcare-nextgate-0.0.1.jar
+----
+
+*2. WSDL 文件*
+
+http://localhost:8080/services/executeMatchUpdate.wsdl
+
+[source, java]
+.*3. 服务访问测试*
+----
+
+----
+
+
+
+
+
