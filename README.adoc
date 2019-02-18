@@ -1,4 +1,106 @@
-== What's Healthcare?
+= What's Healthcare?
+:toc: manual
 
 Healthcare System is mainly for synchronization of master patient records across different healthcare providers. It is important to have consistent patient information across these multiple providers so that patients may receive consistent care. For that to occur, their personal and medical information needs to be shared. Also, any updates to the patient record need to flow across the providers to maintain accuracy and currency.
+
+Primary purpose of this documents is provide a way to deploy Healthcare System both locally and on cloud OpenShift.
+
+== Healthcare System Introduction
+
+Healthcare System is a Fuse(Camel)/AMQ/Apache CXF based project, which mainly contains 3 components:
+
+* *Inbound* - Receive the inbound request via a DEIM Rest Service entrypoint, each request will trigger a camel content, which marshal the request object to xml, then send xml to Queue.
+* *Xlate* - Provide a type convert function, which convert the `DEIM REST Service` model to `Nextgate SOAP Service` model, the converted result be sent to Queue
+* *Outbound* - Retrive the `Nextgate SOAP Service` model from Queue, invoke the `Nextgate` Service.
+
+image:etc/img/healthcare-arch.png[]
+
+=== Inbound Route
+
+image:etc/img/inbound-route.png[]
+
+1. DEIM REST Service receive the request 
+2. DEIM REST Service invoke the Camel Route, forward request to Camel Route
+3. JAXB Marshal request Object to XML Format
+4. Initialize AMQ Client(AMQP Configuration, JmsConnectionFactory, Producer, etc)
+5. Send the XML format request to Queue
+6. Format response code base on Queue Sender results
+7. Send the response code back to DEIM REST Service
+8. DEIM REST Service Recieve Camel route response code
+9. Done 
+
+=== Xlate Route
+
+image:etc/img/xlate-route.png[]
+
+10. Consume message from Queue
+11. Trigger the JAXB, unmarshal XML to Object
+12. Invoke Type Convert Processor, convert the `DEIM REST Service` model to `Nextgate SOAP Service` model
+13. JAXB marshal converted result to xml
+14. Trigger AMQ Client(AMQP Configuration, JmsConnectionFactory, Producer, etc)
+15. Send converted result to Queue
+
+=== Outbound Route
+
+image:etc/img/outbound-route.png[]
+
+16. Consume message from Queue
+17. Trigger the JAXB, unmarshal XML to Object
+18. Invoke Nextgate Web Service 
+19. Send Request to Nextgate Web Service
+
+=== Full Modules
+
+The completed modules including:
+
+[cols="2,5a"]
+|===
+|*Module Name* |*DESC/NOTES*
+
+|model
+|Healthcare XSD Schema based model.
+
+|nextgate-model
+|Nextgate SOAP Service XSD Schema based model.
+
+|inbound
+|Handle the request, forward the result to Queue, refer to <<Inbound Route, Inbound Route>> for more details.
+
+|xlate
+|Type convert module, forward the converted result to Queue, refer to <<Xlate Route, Xlate Route>> for more details.
+
+|outbound
+|Invoke Nextgate SOAP Service, refer to <<Outbound Route, Outbound Route>> for more details.
+
+|nextgate
+|A simple NextGate SOAP Web Service，which used to keep Patient Records.
+
+|client
+|Used for test, a simple JMS Client which used to message to `q.empi.deim.in`, the message is a text message is Marshalled from a `com.customer.app.Person` Object with JAXB.
+|===
+
+=== Build
+
+[source, java]
+----
+$ git clone https://github.com/kylinsoong/healthcare.git
+$ cd healthcare/
+$ mvn clean package
+...
+[INFO] healthcare ......................................... SUCCESS [  0.162 s]
+[INFO] Healthcare Model ................................... SUCCESS [  3.633 s]
+[INFO] Healthcare Nextgate Model .......................... SUCCESS [  0.176 s]
+[INFO] Healthcare NextGate SOAP Service ................... SUCCESS [  1.099 s]
+[INFO] Healthcare Inbound ................................. SUCCESS [  5.044 s]
+[INFO] Healthcare xlate ................................... SUCCESS [  0.757 s]
+[INFO] Healthcare outbound ................................ SUCCESS [  0.679 s]
+[INFO] Healthcare Client .................................. SUCCESS [  0.115 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+...
+----
+
+== Deployment
+
 
