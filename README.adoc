@@ -171,7 +171,7 @@ registry.example.com/amq-broker-7/amq-broker-72-openshift:1.0
 ----
 
 [source, text]
-.*4. Create AMQ Broker via link:etc/files/amq-broker-72-basic.yaml[]*
+.*4. Create AMQ Broker via link:etc/files/amq-broker-72-basic.yaml[amq-broker-72-basic.yaml]*
 ----
 # oc create -f amq-broker-72-basic.yaml
 # oc policy add-role-to-user view system:serviceaccount:healthcare:amq-service-account
@@ -220,7 +220,50 @@ $ mvn fabric8:deploy -Popenshift
 
 == Healthcare System Demonstration
 
-Use the Post test tools like Post man, send a Post request with；
+=== Deployment Overview
+
+If deploy all Healthcare System related modules and prerequisites to OpenShift, you should find the following pods, services and routes:
+
+[source, bash]
+.*1. Pods*
+----
+$ oc get pods | grep Running
+broker-amq-1-f9n9c                1/1       Running     0          <invalid>
+healthcare-inbound-1-52twc        1/1       Running     0          <invalid>
+healthcare-nextgate-1-jjx7f       1/1       Running     0          <invalid>
+healthcare-outbound-1-9cqnl       1/1       Running     0          <invalid>
+healthcare-xlate-1-sf5kw          1/1       Running     0          <invalid>
+----
+
+[source, bash]
+.*2. Services*
+----
+$ oc get services
+NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)     AGE
+broker-amq-amqp       ClusterIP   172.30.209.70    <none>        5672/TCP    <invalid>
+broker-amq-jolokia    ClusterIP   172.30.98.43     <none>        8161/TCP    <invalid>
+broker-amq-mqtt       ClusterIP   172.30.71.221    <none>        1883/TCP    <invalid>
+broker-amq-stomp      ClusterIP   172.30.135.44    <none>        61613/TCP   <invalid>
+broker-amq-tcp        ClusterIP   172.30.118.101   <none>        61616/TCP   <invalid>
+healthcare-inbound    ClusterIP   172.30.130.107   <none>        8080/TCP    <invalid>
+healthcare-nextgate   ClusterIP   172.30.41.159    <none>        8080/TCP    <invalid>
+healthcare-outbound   ClusterIP   172.30.148.254   <none>        8080/TCP    <invalid>
+healthcare-xlate      ClusterIP   172.30.73.243    <none>        8080/TCP    <invalid>
+----
+
+[source, bash]
+.*3. Routes*
+----
+$ oc get routes
+NAME                  HOST/PORT                                 PATH      SERVICES              PORT      TERMINATION   WILDCARD
+amq-console           amq-console-healthcare.apps.example.com             broker-amq-jolokia    <all>                   None
+healthcare-inbound    healthcare-inbound.apps.example.com                 healthcare-inbound    8080                    None
+healthcare-nextgate   healthcare-nextgate.apps.example.com                healthcare-nextgate   8080                    None
+----
+
+=== Scenario Test
+
+Use the Post test tools like Post man, send a Post request with:
 
 * URL - http://healthcare-inbound.apps.example.com/deim/api/match
 * Body Content:
