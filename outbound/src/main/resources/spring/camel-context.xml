@@ -19,7 +19,7 @@
         <route id="xlateRoute" streamCache="true">
             <from id="_from1" uri="amqp:queue:q.empi.nextgate.out"/>
             <log id="_log2" message="Receive Message From Queue: ${body}"/>
-            <log id="_log3" message="Invoke NextGate SOAP"/>        
+            <log id="_log3" message="Invoke NextGate SOAP"/>
         </route>
     </camelContext>
 </beans>

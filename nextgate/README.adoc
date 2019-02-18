@@ -5,7 +5,7 @@
 
 This is simple NextGate SOAP Web Service，which used to keep Patient Records.
 
-== 本地运行 & 测试
+== 本地运行
 
 [source, java]
 .*1. 编译 & 运行*
@@ -18,8 +18,22 @@ $ java -jar target/healthcare-nextgate-0.0.1.jar
 
 http://localhost:8080/services/executeMatchUpdate.wsdl
 
+== 部署到 OpenShift 
+
 [source, java]
-.*3. 服务访问测试*
+.*1. 编译 & 运行*
+----
+$ mvn fabric8:deploy -Popenshift
+----
+
+*2. WSDL 文件*
+
+http://healthcare-nextgate.apps.example.com/services/executeMatchUpdate.wsdl
+
+== 测试
+
+[source, java]
+.**
 ----
 
 ----

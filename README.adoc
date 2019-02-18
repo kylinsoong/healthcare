@@ -101,6 +101,159 @@ $ mvn clean package
 ...
 ----
 
-== Deployment
+== Healthcare System Deployment
 
+=== Prerequisites
 
+[source, text]
+.*1. Create Imagestream fuse7-java-openshift in OpenShift(link:etc/files/fuse7-java-openshift.json[fuse7-java-openshift.json])*
+----
+# oc create -f fuse7-java-openshift.json -n openshift
+----
+
+[source, text]
+.*2. Deploy Nextgate SOAP Service*
+----
+$ cd nextgate
+$ mvn fabric8:deploy -Popenshift
+----
+
+Refer to link:nextgate/README.adoc[nextgate/README.adoc] for more details.
+
+=== AMQ
+
+==== Local Deployment
+
+[source, text]
+.*1. unzip to install*
+----
+$ unzip amq-broker-7.2.3-bin.zip && cd amq-broker-7.2.3
+----
+
+[source, text]
+.*2. Create a broker*
+----
+$ ./bin/artemis create --user admin --password admin --role admin --allow-anonymous y ./instances/broker1
+----
+
+[source, text]
+.*3. Start the broker*
+----
+$ cd instances/broker1/
+$ ./bin/artemis run
+----
+
+*4. Login to AMQ Console*
+
+Access the http://localhost:8161/console in a broswer, login with `admin`/`admin`.
+
+==== Deploy to OpenShift
+
+[source, text]
+.*1. Download Imagestream templete*
+----
+# wget https://raw.githubusercontent.com/jboss-container-images/jboss-amq-7-broker-openshift-image/amq-broker-72/amq-broker-7-image-streams.yaml
+----
+
+[source, text]
+.*2. Edit Imagestream, change registry.access.redhat.com to registry.example.com*
+----
+# vim amq-broker-7-image-streams.yaml
+...
+registry.example.com/amq-broker-7/amq-broker-72-openshift:1.1
+registry.example.com/amq-broker-7/amq-broker-72-openshift:1.0
+----
+
+[source, text]
+.*3. Create Imagestream*
+----
+# oc replace --force  -f amq-broker-7-image-streams.yaml -n openshift
+----
+
+[source, text]
+.*4. Create AMQ Broker via link:etc/files/amq-broker-72-basic.yaml[]*
+----
+# oc create -f amq-broker-72-basic.yaml
+# oc policy add-role-to-user view system:serviceaccount:healthcare:amq-service-account
+# oc new-app --template=amq-broker-72-basic -e AMQ_PROTOCOL=openwire,amqp,stomp,mqtt,hornetq -e AMQ_USER=admin -e AMQ_PASSWORD=admin -e AMQ_ROLE=admin
+----
+
+[source, text]
+.*5. Check that the broker pod is running*
+----
+# oc get pods
+NAME                 READY     STATUS    RESTARTS   AGE
+broker-amq-1-8gsv7   1/1       Running   0          1m
+----
+
+*6. Login to AMQ Console*
+
+Access the http://amq-console-healthcare.apps.example.com/console in a broswer, login with `admin`/`admin`.
+
+image:etc/img/amq-console.png[]
+
+=== Inbound
+
+[source, bash]
+----
+$ oc login https://master.example.com:8443 -u admin -p admin
+$ oc project healthcare
+$ cd inbound/
+$ mvn fabric8:deploy -Popenshift
+----
+
+=== Xlate
+
+[source, bash]
+----
+$ cd xlate/
+$ mvn fabric8:deploy -Popenshift
+----
+
+=== Outbound
+
+[source, bash]
+----
+$ cd outbound/
+$ mvn fabric8:deploy -Popenshift
+----
+
+== Healthcare System Demonstration
+
+Use the Post test tools like Post man, send a Post request with；
+
+* URL - http://healthcare-inbound.apps.example.com/deim/api/match
+* Body Content:
+
+[source, xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<p:Person xmlns:p="http://www.app.customer.com"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.app.customer.com/PatientDemographics.xsd">
+  <p:age>30</p:age>
+  <p:legalname>
+    <p:given>First</p:given>
+    <p:family>Last</p:family>
+  </p:legalname>
+  <p:fathername>Dad</p:fathername>
+  <p:mothername>Mom</p:mothername>
+  <p:gender xsi:type="p:Code">
+    <p:code>Male</p:code>
+  </p:gender>
+</p:Person>
+----
+
+The responses should be like
+
+[source, xml]
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ESBResponse xmlns="http://www.response.app.customer.com">
+    <BusinessKey>cd448557-cbb8-4948-a034-b9808ee97580</BusinessKey>
+    <Published>true</Published>
+    <Comment>DONE</Comment>
+</ESBResponse>
+----
+ 
+image:etc/img/healthcare-inbound-postman.png[]
