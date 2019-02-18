@@ -9,6 +9,7 @@ import org.apache.camel.ProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,16 +47,9 @@ public class DEIMService {
 	@ApiOperation(
             value = "Add a patient",
             notes = "Add a patient with xml format")
-	public ESBResponse addPerson(Person person) {
+	public ESBResponse addPerson(@RequestBody Person person) {
 		
-		log.info("Receive Request: " + person);
-		log.info("    age: " + person.getAge());
-//		log.info("        givenrname: " + person.getLegalname().getGiven());
-//		log.info("        familyname: " + person.getLegalname().getFamily());
-		log.info("    fathername: " + person.getFathername());
-		log.info("    mothername: " + person.getMothername());
-//		log.info("        gender: " + person.getGender().getCode());
-		log.info("");
+		printLog(person);
 		
 		Map<String, Object> headers = new HashMap<String, Object>();
 	    headers.put("METHOD", "match");
@@ -80,6 +74,22 @@ public class DEIMService {
 	    esbResponse.setComment(comment);
 	    
 	    return esbResponse;
+	}
+
+	private void printLog(Person person) {
+
+		log.info("Receive Request: " + person);
+		log.info("    age: " + person.getAge());
+		if(person.getLegalname() != null) {
+			log.info("        givenrname: " + person.getLegalname().getGiven());
+			log.info("        familyname: " + person.getLegalname().getFamily());
+		}	
+		log.info("    fathername: " + person.getFathername());
+		log.info("    mothername: " + person.getMothername());
+		if(person.getGender() != null) {
+			log.info("        gender: " + person.getGender().getCode());
+		}
+		log.info("");
 	}
 
 }

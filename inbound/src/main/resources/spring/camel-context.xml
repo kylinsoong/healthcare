@@ -5,7 +5,8 @@
     <!-- Define a traditional camel context here -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <dataFormats>
-            <jaxb contextPath="com.customer.app" id="myJaxb" prettyPrint="true"/>
+            <jaxb contextPath="com.customer.app" id="myJaxb"
+                partClass="com.customer.app.Person" prettyPrint="true"/>
         </dataFormats>
         <route id="pingRoute" streamCache="true">
             <from id="_from1" uri="direct:pingRoute"/>
