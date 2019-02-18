@@ -206,6 +206,8 @@ $ mvn fabric8:deploy -Popenshift
 
 [source, bash]
 ----
+$ oc login https://master.example.com:8443 -u admin -p admin
+$ oc project healthcare
 $ cd xlate/
 $ mvn fabric8:deploy -Popenshift
 ----
@@ -214,6 +216,8 @@ $ mvn fabric8:deploy -Popenshift
 
 [source, bash]
 ----
+$ oc login https://master.example.com:8443 -u admin -p admin
+$ oc project healthcare
 $ cd outbound/
 $ mvn fabric8:deploy -Popenshift
 ----
