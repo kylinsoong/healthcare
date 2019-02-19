@@ -39,6 +39,16 @@
     </dependency>
     
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-soap-starter</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cxf-starter</artifactId>
+    </dependency>
+    
+    <dependency>
         <groupId>com.healthcare</groupId>
         <artifactId>healthcare-nextgate-model</artifactId>
     </dependency>

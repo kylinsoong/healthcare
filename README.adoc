@@ -304,3 +304,119 @@ The responses should be like
 ----
  
 image:etc/img/healthcare-inbound-postman.png[]
+
+In a complete scenario test, the inbout, xlate, outbout logs as folowing:
+
+[source, text]
+.*1. healthcare-inbound*
+----
+18:14:59.072 [XNIO-3 task-1] INFO  com.healthcare.DEIMService - Receive Request: com.customer.app.Person@3be20ac1
+18:14:59.072 [XNIO-3 task-1] INFO  com.healthcare.DEIMService -     age: 30
+18:14:59.072 [XNIO-3 task-1] INFO  com.healthcare.DEIMService -         givenrname: First
+18:14:59.072 [XNIO-3 task-1] INFO  com.healthcare.DEIMService -         familyname: Last
+18:14:59.072 [XNIO-3 task-1] INFO  com.healthcare.DEIMService -     fathername: Dad
+18:14:59.072 [XNIO-3 task-1] INFO  com.healthcare.DEIMService -     mothername: Mom
+18:14:59.072 [XNIO-3 task-1] INFO  com.healthcare.DEIMService -         gender: Male
+18:14:59.072 [XNIO-3 task-1] INFO  com.healthcare.DEIMService - 
+18:14:59.073 [XNIO-3 task-1] INFO  matchRoute - Receive DEIM Service's Request: <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Person xmlns="http://www.app.customer.com">
+    <age>30</age>
+    <legalname>
+        <given>First</given>
+        <family>Last</family>
+    </legalname>
+    <fathername>Dad</fathername>
+    <mothername>Mom</mothername>
+    <gender>
+        <code>Male</code>
+    </gender>
+</Person>
+
+18:14:59.092 [AmqpProvider :(5):[amqp://broker-amq-amqp:5672]] INFO  o.a.q.jms.sasl.SaslMechanismFinder - Best match for SASL auth was: SASL-PLAIN
+18:14:59.109 [AmqpProvider :(5):[amqp://broker-amq-amqp:5672]] INFO  org.apache.qpid.jms.JmsConnection - Connection ID:eba377a8-482e-47eb-bf75-a49634b90373:5 connected to remote Broker: amqp://broker-amq-amqp:5672
+18:14:59.130 [XNIO-3 task-1] INFO  matchRoute - Send to DEIM Queue
+----
+
+[source, text]
+.*2. healthcare-xlate*
+----
+18:14:51.917 [Camel (MyCamel) thread #1 - JmsConsumer[q.empi.deim.in]] INFO  xlateRoute - Receive Message From Queue: <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Person xmlns="http://www.app.customer.com">
+    <age>30</age>
+    <legalname>
+        <given>First</given>
+        <family>Last</family>
+    </legalname>
+    <fathername>Dad</fathername>
+    <mothername>Mom</mothername>
+    <gender>
+        <code>Male</code>
+    </gender>
+</Person>
+
+18:14:51.919 [Camel (MyCamel) thread #1 - JmsConsumer[q.empi.deim.in]] INFO  xlateRoute - After Unmarshal: <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Person xmlns="http://www.app.customer.com">
+    <age>30</age>
+    <legalname>
+        <given>First</given>
+        <family>Last</family>
+    </legalname>
+    <fathername>Dad</fathername>
+    <mothername>Mom</mothername>
+    <gender>
+        <code>Male</code>
+    </gender>
+</Person>
+
+18:14:51.959 [Camel (MyCamel) thread #1 - JmsConsumer[q.empi.deim.in]] INFO  xlateRoute - Before Convert: com.customer.app.Person
+18:14:51.960 [Camel (MyCamel) thread #1 - JmsConsumer[q.empi.deim.in]] INFO  xlateRoute - After  Convert: com.nextgate.model.GetExecuteMatchUpdateRequest
+18:14:51.961 [Camel (MyCamel) thread #1 - JmsConsumer[q.empi.deim.in]] INFO  xlateRoute - After  Marshal: <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<getExecuteMatchUpdateRequest xmlns="http://nextgate.com/nextgate-service">
+    <ExecuteMatchUpdate>
+        <age>30</age>
+        <givenName>First</givenName>
+        <familyName>Last</familyName>
+        <fatherName>Dad</fatherName>
+        <motherName>Mom</motherName>
+        <gender>M</gender>
+    </ExecuteMatchUpdate>
+</getExecuteMatchUpdateRequest>
+
+18:14:51.972 [Camel (MyCamel) thread #1 - JmsConsumer[q.empi.deim.in]] INFO  xlateRoute - Send to nextGate Queue
+----
+
+[source, text]
+.*3. healthcare-outbound*
+----
+18:14:59.257 [Camel (MyCamel) thread #1 - JmsConsumer[q.empi.nextgate.out]] INFO  xlateRoute - Receive Message From Queue: <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<getExecuteMatchUpdateRequest xmlns="http://nextgate.com/nextgate-service">
+    <ExecuteMatchUpdate>
+        <age>30</age>
+        <givenName>First</givenName>
+        <familyName>Last</familyName>
+        <fatherName>Dad</fatherName>
+        <motherName>Mom</motherName>
+        <gender>M</gender>
+    </ExecuteMatchUpdate>
+</getExecuteMatchUpdateRequest>
+
+18:14:59.417 [Camel (MyCamel) thread #1 - JmsConsumer[q.empi.nextgate.out]] INFO  xlateRoute - Before Unmarshal: [B
+18:14:59.429 [Camel (MyCamel) thread #1 - JmsConsumer[q.empi.nextgate.out]] INFO  xlateRoute - After Unmarshal: com.nextgate.model.GetExecuteMatchUpdateRequest
+18:14:59.452 [Camel (MyCamel) thread #1 - JmsConsumer[q.empi.nextgate.out]] INFO  xlateRoute - SOAP Request: <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Envelope xmlns:ns2="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns3="http://nextgate.com/nextgate-service">
+    <ns2:Body>
+        <ns3:getExecuteMatchUpdateRequest>
+            <ns3:ExecuteMatchUpdate>
+                <ns3:age>30</ns3:age>
+                <ns3:givenName>First</ns3:givenName>
+                <ns3:familyName>Last</ns3:familyName>
+                <ns3:fatherName>Dad</ns3:fatherName>
+                <ns3:motherName>Mom</ns3:motherName>
+                <ns3:gender>M</ns3:gender>
+            </ns3:ExecuteMatchUpdate>
+        </ns3:getExecuteMatchUpdateRequest>
+    </ns2:Body>
+</ns2:Envelope>
+
+18:14:59.452 [Camel (MyCamel) thread #1 - JmsConsumer[q.empi.nextgate.out]] INFO  xlateRoute - Invoke NextGate Service
+----

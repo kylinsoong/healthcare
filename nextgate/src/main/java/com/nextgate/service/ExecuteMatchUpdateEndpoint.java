@@ -11,6 +11,7 @@ import com.nextgate.model.GetExecuteMatchUpdateResponse;;
 
 @Endpoint
 public class ExecuteMatchUpdateEndpoint {
+	
 	private static final String NAMESPACE_URI = "http://nextgate.com/nextgate-service";
 
 	private ExecuteMatchUpdateRepository countryRepository;

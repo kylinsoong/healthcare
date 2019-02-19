@@ -13,51 +13,39 @@
   <packaging>jar</packaging>
 
   <name>Healthcare Nextgate Model</name>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-sources</phase>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/generated-sources</source>
-              </sources>
-            </configuration>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-xjc-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-sources</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>xsdtojava</goal>
-            </goals>
-            <configuration>
-              <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
-              <xsdOptions>
-                <xsdOption>
-                  <xsd>${basedir}/src/main/resources/META-INF/xsd/nextgate.xsd</xsd>
-                  <packagename>com.nextgate.model</packagename>
-                  <bindingFile>${basedir}/src/main/resources/ws/binding.xjb</bindingFile>
-                  <extension>true</extension>
-                </xsdOption>
-              </xsdOptions>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+  
+  <profiles>
+        <profile>
+            <id>wsdl2java</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-codegen-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-sources</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>wsdl2java</goal>
+                                </goals>
+                                <configuration>
+                                    <sourceRoot>${basedir}/src/main/java</sourceRoot>
+                                    <wsdlOptions>
+                                        <wsdlOption>
+                                            <wsdl>http://healthcare-nextgate.apps.example.com/services/executeMatchUpdate.wsdl</wsdl>
+                                            <packagenames>
+                                                <packagename>http://nextgate.com/nextgate-service=com.nextgate.model</packagename>
+                                            </packagenames>
+                                        </wsdlOption>
+                                    </wsdlOptions>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

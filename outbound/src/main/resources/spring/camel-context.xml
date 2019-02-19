@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:camel="http://camel.apache.org/schema/spring"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    xmlns:cxf="http://camel.apache.org/schema/cxf"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd  http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf-spring.xsd">
     <!-- Define a traditional camel context here -->
+    <cxf:cxfEndpoint
+        address="http://healthcare-nextgate.apps.example.com:80/services"
+        endpointName="ExecuteMatchUpdatePortSoap11" id="getExecuteMatchUpdate"
+        serviceClass="com.nextgate.model.ExecuteMatchUpdatePort"
+        serviceName="tns:ExecuteMatchUpdatePortService"
+        wsdlURL="http://healthcare-nextgate.apps.example.com/services/executeMatchUpdate.wsdl" xmlns:tns="http://nextgate.com/nextgate-service"/>
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <!--  -->
         <dataFormats>
-            <jaxb contextPath="com.nextgate.model" id="nextgateJaxb" prettyPrint="true"/>
+            <jaxb contextPath="com.nextgate.model" id="nextgateJaxb"
+                partClass="com.nextgate.model.GetExecuteMatchUpdateRequest" prettyPrint="true"/>
         </dataFormats>
         <onException id="_onException1">
             <exception>java.lang.IllegalArgumentException</exception>
@@ -19,7 +28,21 @@
         <route id="xlateRoute" streamCache="true">
             <from id="_from1" uri="amqp:queue:q.empi.nextgate.out"/>
             <log id="_log2" message="Receive Message From Queue: ${body}"/>
-            <log id="_log3" message="Invoke NextGate SOAP"/>
+            <log id="_log3" message="Before Unmarshal: ${body.class.name}"/>
+            <unmarshal id="_unmarshal1" ref="nextgateJaxb"/>
+            <log id="_log4" message="After Unmarshal: ${body.class.name}"/>
+            <marshal id="_marshal1">
+                <soapjaxb contextPath="com.nextgate.model"/>
+            </marshal>
+            <log id="_log5" message="SOAP Request: ${body}"/>
+            <log id="_log6" message="Invoke NextGate Service"/>
+            <to id="_to2" uri="cxf:bean:getExecuteMatchUpdate?dataFormat=MESSAGE"/>
+            <onException id="_onException2">
+                <exception>java.lang.Exception</exception>
+                <handled>
+                    <constant>true</constant>
+                </handled>
+            </onException>        
         </route>
     </camelContext>
 </beans>

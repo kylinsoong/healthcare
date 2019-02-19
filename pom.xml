@@ -31,6 +31,7 @@
         <fuse.version>7.2.0.fuse-720020-redhat-00001</fuse.version>
         <junit.version>4.12</junit.version>
         
+        <version.cxf-codegen-plugin>3.3.0</version.cxf-codegen-plugin>
         <version.exec-maven-plugin>1.6.0</version.exec-maven-plugin>
         <version.cxf-xjc-plugin>3.3.0</version.cxf-xjc-plugin>
         <version.build-helper-maven-plugin>3.0.0</version.build-helper-maven-plugin>
@@ -133,6 +134,11 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>${version.exec-maven-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-codegen-plugin</artifactId>
+                    <version>${version.cxf-codegen-plugin}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
