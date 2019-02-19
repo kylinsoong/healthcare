@@ -6,8 +6,11 @@
     <bean class="com.healthcare.TypeConvertProcessor" id="typeConvertService"/>
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <dataFormats>
-            <jaxb contextPath="com.customer.app" id="myJaxb" prettyPrint="true"/>
-            <jaxb contextPath="com.nextgate.model" id="nextgateJaxb" prettyPrint="true"/>
+            <jaxb contextPath="com.customer.app" id="myJaxb"
+                partClass="com.customer.app.Person" prettyPrint="true"/>
+            <!-- -->
+            <jaxb contextPath="com.nextgate.model" id="nextgateJaxb"
+                partClass="com.nextgate.model.GetExecuteMatchUpdateRequest" prettyPrint="true"/>
         </dataFormats>
         <onException id="_onException1">
             <exception>com.healthcare.TypeConvertException</exception>
@@ -22,18 +25,20 @@
             <from id="_from1" uri="amqp:queue:q.empi.deim.in"/>
             <log id="_log1" message="Receive Message From Queue: ${body}"/>
             <unmarshal id="_unmarshal1" ref="myJaxb"/>
-            <log id="_log2" message="After JAXB Unmarshal: ${body}"/>
+            <log id="_log2" message="After Unmarshal: ${body}"/>
+            <log id="_log7" message="Before Convert: ${body.class.name}"/>
             <to id="_to1" uri="typeConvertService"/>
-            <log id="_log3" message="After Convert: ${body}"/>
-            <marshal id="_marshal1">
-                <jaxb contextPath="com.nextgate.model"
-                    partClass="com.nextgate.model.ExecuteMatchUpdate" prettyPrint="true"/>
-            </marshal>
-            <setBody id="_setBody1">
-                <simple>${body}</simple>
-            </setBody>
+            <log id="_log4" message="After  Convert: ${body.class.name}"/>
+            <marshal id="_marshal1" ref="nextgateJaxb"/>
+            <log id="_log8" message="After  Marshal: ${body}"/>
             <to id="_to2" uri="amqp:queue:q.empi.nextgate.out"/>
             <log id="_log5" message="Send to nextGate Queue"/>
         </route>
+        <!--  
+        <route id="nextGateRoute" streamCache="true">
+            <from id="_from2" uri="amqp:queue:q.empi.nextgate.out"/>
+            <log id="_log6" message="${body}"/>
+        </route>
+        -->
     </camelContext>
 </beans>

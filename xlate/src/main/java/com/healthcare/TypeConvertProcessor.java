@@ -1,7 +1,5 @@
 package com.healthcare;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 
 import org.apache.camel.Exchange;
@@ -11,6 +9,7 @@ import org.apache.camel.Processor;
 import com.customer.app.Person;
 import com.nextgate.model.ExecuteMatchUpdate;
 import com.nextgate.model.Gender;
+import com.nextgate.model.GetExecuteMatchUpdateRequest;
 
 public class TypeConvertProcessor implements Processor {
 
@@ -33,14 +32,21 @@ public class TypeConvertProcessor implements Processor {
 			} else {
 				match.setGender(Gender.F);
 			}
+			
+			GetExecuteMatchUpdateRequest request = new GetExecuteMatchUpdateRequest();
+			request.setExecuteMatchUpdate(match);
+			
 			Message msg = exchange.getIn();
 			
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			oos = new ObjectOutputStream(baos);
-			oos.writeObject(match);
-			oos.flush();
+			// write object inputstream
+//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//			oos = new ObjectOutputStream(baos);
+//			oos.writeObject(match);
+//			oos.flush();		
+//			msg.setBody(new ByteArrayInputStream(baos.toByteArray()));
 			
-			msg.setBody(new ByteArrayInputStream(baos.toByteArray()));
+			msg.setBody(request);
+			
 			exchange.setOut(msg);
 		} catch (Exception e) {
 			throw new TypeConvertException(e.getMessage());
